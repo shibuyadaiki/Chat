@@ -9,14 +9,19 @@
 	<input type="submit" name="name" value="Refresh">
 	<br>
 	<?php
-	$fp = fopen('chat.log','r');
-	$count = 0;
-	$chatData;
-	while(($data = fgets($fp))!==false){
-		$chatData[] = explode(',',$data);
-		$count++;
+	$dsn = 'mysql:dbname=chat;host=127.0.0.1';
+	$user = 'root';
+	$pw = 'H@chiouji1';
+	$sql = 'SELECT * FROM Log';
+	$dbh = new PDO($dsn,$user,$pw);
+	$sth = $dbh->prepare($sql);
+	$sth->execute();
+
+	$chatData = [];
+	while(($buff = $sth->fetch())!==false){
+		$chatData[] = [$buff['userName'], $buff['message'],$buff['date']];
 	}
-	for($a = 0;$a < $count;$a++){
+	for($a = 0;$a < count($chatData) ;$a++){
 		for($b = 0;$b < 3;$b++){
 			if($b == 0){
 				print $chatData[$a][$b]."\t";
@@ -30,7 +35,6 @@
 		}
 		?><hr><?php
 	}
-	fclose($fp);
 	?>
 	
 	<input type="submit" name="name" value="Refresh">
